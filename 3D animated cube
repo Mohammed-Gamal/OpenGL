@@ -1,0 +1,132 @@
+#include <Gl/glut.h>
+#include <windows.h>
+#include <iostream>
+
+const int WIDTH = 500;
+const int HEIGHT = 500;
+
+float TranslateYAngle = 0.0, TranslateXAngle = 0.0;
+float RotateAngle = 0.60;
+float ScaleAngle = 2.0;
+
+void drawcube()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(1.0, 1.0, 1.0);
+	glMatrixMode(GL_MODELVIEW);
+
+	glRotatef(RotateAngle, 0.0, 0.0, 0.5);
+	//glScalef(ScaleAngle, ScaleAngle - 1.5, ScaleAngle - 1.0);
+	//glTranslatef(TranslateXAngle, TranslateYAngle, 0.0);
+
+	glutWireCube(20.0);
+
+	glFlush();
+	glutSwapBuffers();
+}
+
+void Translate(float TranslateXAngle)
+{
+	glTranslatef(TranslateXAngle, TranslateYAngle, 0.0);
+}
+
+void Scale(float ScaleAngle)
+{
+	glScalef(ScaleAngle, ScaleAngle - 1.5, ScaleAngle - 1.0);
+}
+
+void keyboard(unsigned char key, int x, int y)
+{
+	key = tolower(key);
+
+	switch (key)
+	{
+		case 't':
+			TranslateXAngle += 1.0;
+			Translate(TranslateXAngle);
+			break;
+		case 'r':
+			RotateAngle += 1.0;
+			std::cout << "The speed has been changed to: " << RotateAngle << std::endl;
+			break;
+		case 's':
+			ScaleAngle += 0.01f;
+			Scale(ScaleAngle);
+			break;
+		case 'u':
+			RotateAngle = 0.60;
+			std::cout << "The speed has reset to: " << RotateAngle << std::endl;
+			break;
+		case 'q':
+			exit(0);
+			break;
+	}
+}
+
+void Special_Keys(int key, int x, int y)
+{
+	switch (key)
+	{
+		case GLUT_KEY_UP:
+			TranslateYAngle += 1.0;
+			break;
+		case GLUT_KEY_DOWN:
+			TranslateYAngle -= 1.0;
+			break;
+		case GLUT_KEY_LEFT:
+			TranslateXAngle -= 1.0;
+			break;
+		case GLUT_KEY_RIGHT:
+			TranslateXAngle += 1.0;
+			break;
+	}
+}
+
+void reshape(GLint width, GLint height)
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	glViewport(0, 0, width, height);
+	gluOrtho2D(0, width, height, 0);
+	glMatrixMode(GL_MODELVIEW);
+
+	glutPostRedisplay();
+}
+
+void Init()
+{
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-30.0, 30.0, -30.0, 30.0, -30.0, 30.0);
+}
+
+int main(int argc, char** argv)
+{
+	glutInit(&argc, argv);
+	glutInitWindowSize(WIDTH, HEIGHT);
+	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - WIDTH) / 2, (glutGet(GLUT_SCREEN_HEIGHT) - HEIGHT) / 2);
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
+	glutCreateWindow("Glut Animations");
+
+	// Print OpenGL version in console
+	std::cout << (const char*)glGetString(GL_VERSION) << std::endl;
+
+        // Print the available keybindings in console
+	std::cout << "\nAvaialable Keybindings: \n\n"
+		"(t) Translation [X Axis]\n(r) Rotation\n(S) Scale\n(U) undo/reset\n(q) Quit/Exit"
+		"\nKey arrows";
+
+	glutKeyboardFunc(keyboard);
+	glutSpecialFunc(Special_Keys);
+
+	glutDisplayFunc(drawcube);
+	glutIdleFunc(drawcube);
+	//glutReshapeFunc(reshape);
+	Init();
+	glRotatef(30.0, 1.0, 1.0, 0.0);
+	glutMainLoop();
+
+	return 0;
+}
