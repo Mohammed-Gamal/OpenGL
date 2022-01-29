@@ -1,0 +1,110 @@
+#include<windows.h>
+#include<gl/gl.h>
+#include<gl/glut.h>
+//////////////////////////
+float angle=1.0;
+//////////////////////////
+void drawhead()
+{
+	//////////head///////////////
+	glPushMatrix();
+	glTranslatef(0.0,31.0,0.0);
+	glutSolidSphere(5.0,50.0,50.0);
+	glPopMatrix();
+	///////////cone//////////////////
+	glPushMatrix();
+	glColor3f(1.0,0.647059,0.0);
+	glTranslatef(0.0,29.0,0.0);
+	glRotatef(90.0,0.0,0.0,1.0);
+	glutSolidCone(1.5,9.0,50.0,50.0);
+	glPopMatrix();
+	/////////////left_eye/////////////
+	glPushMatrix();
+	glColor3f(0.0,0.0,0.0);
+	glTranslatef(-2.0,33.0,3.0);
+	glutSolidSphere(0.5,50.0,50.0);
+	glPopMatrix();
+	/////////////right_eye//////////////
+	glPushMatrix();
+	glColor3f(0.0,0.0,0.0);
+	glTranslatef(2.0,33.0,3.0);
+	glutSolidSphere(0.5,50.0,50.0);
+	glPopMatrix();
+	////////////////////////////////////
+}
+///////////////////drawIceman/////////////////////////////////
+void display(void)
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(1.0,1.0,1.0);
+	glMatrixMode(GL_MODELVIEW);
+	///////////body////////////////////
+	glLoadIdentity();
+	glRotatef(angle,0.0,1.0,0.0);
+	glPushMatrix();
+	glutSolidSphere(10.0,50.0,50.0);
+	/////////////////////////////////
+	glPushMatrix();
+	glTranslatef(0.0,18.0,0.0);
+	glutSolidSphere(8.0,50.0,50.0);
+	glPopMatrix();
+	///////////////////////////////
+	drawhead();
+	///////////cone////////////////////
+	glPushMatrix();
+	glColor3f(1.0,0.0,0.0);
+	glTranslatef(0.0,36.0,0.0);
+	glRotatef(-90.0,1.0,0.0,0.0);
+	glutSolidCone(3.5,10.0,50.0,50.0);
+	glPopMatrix();
+	//////////////////////////////////
+	glFlush();
+	glutSwapBuffers();
+}
+////////////keyboardfunc////////////
+void Special_Keys(int key,int x,int y)
+{
+	switch(key)
+	{
+		case GLUT_KEY_LEFT:
+			angle=angle+1.0;
+			break;
+		case GLUT_KEY_RIGHT:
+			angle=angle-1.0;
+			break;
+	}
+}
+///////////mouseFunc///////////////////////
+void mouse(int btn,int state,int x,int y)
+{
+	if(state==GLUT_DOWN)
+	{
+		if(btn==GLUT_RIGHT_BUTTON)
+			angle=angle+1.0;
+		if(btn==GLUT_LEFT_BUTTON)
+			angle=angle-1.0;
+		else
+ 			angle=0.0;
+	}
+}
+/////////////main/////////////////
+int main(int argc,char** argv)
+{
+	glutInit(& argc,argv);// this command should be called before any other GLUT routine.
+	glutInitWindowSize(500,500);//the size of the output window.
+	glutInitDisplayMode(GLUT_RGB|GLUT_DOUBLE);//RGB is the color index or coloe model ,DOUBLE for double buffering.
+	glutCreateWindow("Snow Man");//create a window with an opengl context,the window is not yet displayed until glutMainLoop() is called.
+	glutSpecialFunc(Special_Keys);//this func. enable using the arrow key (left,right,down,up) in the keyboard.
+	glutMouseFunc(mouse);//mouse call back function all us to use mouse .
+	glutDisplayFunc(display);//its important event takes the function that redraw the scene.
+	glutIdleFunc(display);//its excute the function if no other events are pending,this routine takes a pointer to the function as its only argument.
+	glMatrixMode(GL_PROJECTION);//it means that the current matrix specifies the projection transformation.
+	glLoadIdentity();//clear the current matrix.
+	glOrtho(-45.0,45.0,-45.0,45.0,-45.0,45.0);//creats orthographic parallel viewing valume.
+	glRotatef(30.0,1.0,0,0);//rotate 30 degree about x-axis.
+	glMatrixMode(GL_MODELVIEW);//specifies model view transformation.
+	glClearColor(0.0,0.0,0.0,0.0);//the default clearing color which is black.
+	glutMainLoop();
+	return(0);
+}
+//////////////////////////////
